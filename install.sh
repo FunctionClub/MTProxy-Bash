@@ -71,6 +71,7 @@ IP=$(curl -s ip.sb)
 
 # 切换至临时目录
 mkdir /tmp/MTProxy
+cd /tmp/MTProxy
 
 # 下载 MTProxy 项目源码
 git clone https://github.com/TelegramMessenger/MTProxy
@@ -95,17 +96,50 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/MTProxy/objs/bin
-ExecStart=/usr/local/bin/mtproto-proxy -u nobody -p 8888 -H ${uport} -S ${SECRET} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf -M 1
+ExecStart=/usr/local/bin/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
+
+# 设置防火墙
+if [ ! -f "/etc/iptables.up.rules" ]; then 
+    iptables-save > /etc/iptables.up.rules
+fi
+
+if [[ ${OS} =~ ^Ubuntu$|^Debian$ ]];then
+	iptables-restore < /etc/iptables.up.rules
+	clear
+	iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
+	iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
+	iptables-save > /etc/iptables.up.rules
+fi
+
+if [[ ${OS} == CentOS ]];then
+	if [[ $CentOS_RHEL_version == 7 ]];then
+		iptables-restore < /etc/iptables.up.rules
+		iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
+    	iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
+		iptables-save > /etc/iptables.up.rules
+	else
+		iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
+    	iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
+		/etc/init.d/iptables save
+		/etc/init.d/iptables restart
+	fi
+fi
+
+
 # 设置开机自启并启动 MTProxy
 systemctl daemon-reload
 systemctl enable MTProxy.service
 systemctl restart MTProxy
+
+# 清理安装残留
+rm -rf /tmp/MTProxy
+cd ~
 
 # 显示服务信息
 clear
