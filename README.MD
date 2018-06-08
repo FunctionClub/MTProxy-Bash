@@ -8,11 +8,11 @@ MTProxy 是专门用于 Telegram 的代理软件。目前 Telegram 内部直接�
 
 # 安装
 ```bash
-wget -N --no-check-certificate https://github.com/FunctionClub/MTProxy-Bash/blob/master/install.sh && bash install.sh
+wget -N --no-check-certificate https://raw.githubusercontent.com/FunctionClub/MTProxy-Bash/master/install.sh && bash install.sh
 ```
 
 # 卸载
 ```bash
-wget -N --no-check-certificate https://github.com/FunctionClub/MTProxy-Bash/blob/master/uninstall.sh && bash uninstall.sh
+wget -N --no-check-certificate https://raw.githubusercontent.com/FunctionClub/MTProxy-Bash/master/uninstall.sh && bash uninstall.sh
 ```
 
