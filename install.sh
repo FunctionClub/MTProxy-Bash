@@ -32,8 +32,25 @@ else
   kill -9 $$
 fi
 
+# 定义终端颜色
+red='\033[0;31m'
+green='\033[0;32m'
+yellow='\033[0;33m'
+plain='\033[0m'
+
+# 打印欢迎信息
+clear
+echo "---------------------------------------------"
+echo "  Install MTProxy For Telegram with Onekey"
+echo "  Author: 雨落无声"
+echo "  URL: https://ylws.me"
+echo "  Telegram: https://t.me/ylwsclub"
+echo "---------------------------------------------"
+echo ""
+
+
 # 输入代理端口
-read -p "请输入MTProxy运行端口号[默认5000]： " uport
+read -p "Inout the Port for running MTProxy [Default: 5000]： " uport
 if [[ -z "${uport}" ]];then
 	uport="5000"
 else
@@ -45,13 +62,13 @@ else
 		else
 			tport=`netstat -anlt | awk '{print $4}' | sed -e '1,2d' | awk -F : '{print $NF}' | sort -n | uniq | grep "$uport"`
 			if [[ ! -z ${tport} ]];then
-				echo "端口号已存在！应用默认端口号5000"
+				echo -e "${red}端口号已存在！应用默认端口号5000${plain}"
 				unset uport
 				uport="5000"
 			fi
 		fi
 	else
-		echo "请输入数字！应用默认端口号5000"
+		echo -e "${red}请输入数字！应用默认端口号5000${plain}"
 		uport="5000"
 	fi
 fi
@@ -68,6 +85,9 @@ fi
 
 # 获取本机 IP 地址
 IP=$(curl -s ip.sb)
+
+# 获取当前工作目录
+PWD=$(pwd)
 
 # 切换至临时目录
 mkdir /tmp/MTProxy
@@ -95,7 +115,7 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/MTProxy/objs/bin
+WorkingDirectory=/usr/local/bin/
 ExecStart=/usr/local/bin/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
 Restart=on-failure
 
@@ -137,15 +157,17 @@ systemctl daemon-reload
 systemctl enable MTProxy.service
 systemctl restart MTProxy
 
-# 清理安装残留
-rm -rf /tmp/MTProxy
-cd ~
-
 # 显示服务信息
 clear
 echo "MTProxy 安装成功！"
-echo "服务器IP：${IP}"
-echo "端口：${uport}"
-echo "Secret：${SECRET}"
+echo "服务器IP：  ${IP}"
+echo "端口：      ${uport}"
+echo "Secret：   ${SECRET}"
 echo ""
-echo "TG代理链接：tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}"
+echo -e "TG代理链接：${green}tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
+
+
+# 清理安装残留
+rm -rf /tmp/MTProxy
+cd ${PWD}
+rm -rf install.sh

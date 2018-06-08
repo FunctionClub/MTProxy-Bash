@@ -16,3 +16,8 @@ systemctl stop MTProxy
 rm -rf /etc/systemd/system/MTProxy.service
 systemctl daemon-reload
 
+
+clear
+echo "卸载成功！"
+
+rm -rf uninstall.sh
