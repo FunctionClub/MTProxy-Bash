@@ -86,9 +86,6 @@ fi
 # 获取本机 IP 地址
 IP=$(curl -s ip.sb)
 
-# 获取当前工作目录
-PWD=$(pwd)
-
 # 切换至临时目录
 mkdir /tmp/MTProxy
 cd /tmp/MTProxy
@@ -159,8 +156,6 @@ systemctl restart MTProxy
 
 # 清理安装残留
 rm -rf /tmp/MTProxy >> /dev/null 
-cd ${PWD} >> /dev/null 
-rm -rf install.sh >> /dev/null 
 
 # 显示服务信息
 clear
