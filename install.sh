@@ -157,6 +157,11 @@ systemctl daemon-reload
 systemctl enable MTProxy.service
 systemctl restart MTProxy
 
+# 清理安装残留
+rm -rf /tmp/MTProxy >> /dev/null 
+cd ${PWD} >> /dev/null 
+rm -rf install.sh >> /dev/null 
+
 # 显示服务信息
 clear
 echo "MTProxy 安装成功！"
@@ -166,8 +171,3 @@ echo "Secret：   ${SECRET}"
 echo ""
 echo -e "TG代理链接：${green}tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
 
-
-# 清理安装残留
-rm -rf /tmp/MTProxy
-cd ${PWD}
-rm -rf install.sh
