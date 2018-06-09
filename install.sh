@@ -136,10 +136,17 @@ fi
 
 if [[ ${OS} == CentOS ]];then
 	if [[ $CentOS_RHEL_version == 7 ]];then
-		iptables-restore < /etc/iptables.up.rules
-		iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
-    	iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
-		iptables-save > /etc/iptables.up.rules
+		systemctl status firewalld > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            firewall-cmd --permanent --zone=public --add-port=${uport}/tcp
+            firewall-cmd --permanent --zone=public --add-port=${uport}/udp
+            firewall-cmd --reload
+		else
+			iptables-restore < /etc/iptables.up.rules
+			iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
+    		iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
+			iptables-save > /etc/iptables.up.rules
+		fi
 	else
 		iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
     	iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
