@@ -32,6 +32,9 @@ else
   kill -9 $$
 fi
 
+# 检测CPU线程数
+THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
+
 # 定义终端颜色
 red='\033[0;31m'
 green='\033[0;32m'
@@ -95,7 +98,7 @@ git clone https://github.com/TelegramMessenger/MTProxy
 
 # 进入项目编译并安装至 /usr/local/bin/
 pushd MTProxy
-make
+make -j ${THREAD}
 cp objs/bin/mtproto-proxy /usr/local/bin/
 
 # 生成密钥
