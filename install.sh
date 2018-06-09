@@ -52,6 +52,24 @@ echo "---------------------------------------------"
 echo ""
 
 
+# 获取本机 IP 地址
+IP=$(curl -4 -s ip.sb)
+
+# 查看是否已安装
+if [[ ${IP} != "" ]];then
+  if [ -f "/etc/secret" ]; then 
+    SECRET=$(cat /etc/secret)
+    PORT=$(cat /etc/proxy-port)
+    echo "MTProxy 已安装"
+    echo "服务器IP：  ${IP}"
+    echo "端口：      ${PORT}"
+    echo "Secret：   ${SECRET}"
+    echo ""
+    echo -e "TG代理链接：${green}tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}${plain}"
+    exit 0
+  fi
+fi
+
 # 输入代理端口
 read -p "Inout the Port for running MTProxy [Default: 5000]： " uport
 if [[ -z "${uport}" ]];then
@@ -60,17 +78,17 @@ fi
 
 if [ ${OS} == Ubuntu ] || [ ${OS} == Debian ];then
 	apt-get update -y
-    apt-get install build-essential libssl-dev zlib1g-dev curl git vim-common -y
+  apt-get install build-essential libssl-dev zlib1g-dev curl git vim-common -y
 	apt-get install xxd -y
 fi
 
 if [ ${OS} == CentOS ];then
-    yum install openssl-devel zlib-devel curl git vim-common -y
-    yum groupinstall "Development Tools" -y
+  yum install openssl-devel zlib-devel curl git vim-common -y
+  yum groupinstall "Development Tools" -y
 fi
 
-# 获取本机 IP 地址
-IP=$(curl -4 -s ip.sb)
+
+
 
 # 切换至临时目录
 mkdir /tmp/MTProxy
@@ -87,6 +105,7 @@ cp objs/bin/mtproto-proxy /usr/local/bin/
 # 生成密钥
 curl -s https://core.telegram.org/getProxySecret -o /etc/proxy-secret
 curl -s https://core.telegram.org/getProxyConfig -o /etc/proxy-multi.conf
+echo "${uport}" > /etc/proxy-port
 head -c 16 /dev/urandom | xxd -ps > /etc/secret
 SECRET=$(cat /etc/secret)
 

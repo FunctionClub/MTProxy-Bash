@@ -9,6 +9,7 @@ export PATH
 rm -rf /etc/proxy-secret
 rm -rf /etc/proxy-multi.conf
 rm -rf /etc/secret
+rm -rf /etc/proxy-port
 
 # 删除服务文件
 systemctl disable MTProxy.service
