@@ -60,7 +60,8 @@ fi
 
 if [ ${OS} == Ubuntu ] || [ ${OS} == Debian ];then
 	apt-get update -y
-    apt-get install build-essential libssl-dev zlib1g-dev curl git xxd -y
+    apt-get install build-essential libssl-dev zlib1g-dev curl git vim-common -y
+	apt-get install xxd -y
 fi
 
 if [ ${OS} == CentOS ];then
