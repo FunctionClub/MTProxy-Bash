@@ -56,33 +56,15 @@ echo ""
 read -p "Inout the Port for running MTProxy [Default: 5000]： " uport
 if [[ -z "${uport}" ]];then
 	uport="5000"
-else
-	if [[ "$uport" =~ ^(-?|\+?)[0-9]+(\.?[0-9]+)?$ ]];then
-		if [[ $uport -ge "65535" || $uport -le 1 ]];then
-			echo "端口范围取值[1,65535]，应用默认端口号5000"
-			unset uport
-			uport="5000"
-		else
-			tport=`netstat -anlt | awk '{print $4}' | sed -e '1,2d' | awk -F : '{print $NF}' | sort -n | uniq | grep "$uport"`
-			if [[ ! -z ${tport} ]];then
-				echo -e "${red}端口号已存在！应用默认端口号5000${plain}"
-				unset uport
-				uport="5000"
-			fi
-		fi
-	else
-		echo -e "${red}请输入数字！应用默认端口号5000${plain}"
-		uport="5000"
-	fi
 fi
 
 if [ ${OS} == Ubuntu ] || [ ${OS} == Debian ];then
 	apt-get update -y
-    apt-get install build-essential libssl-dev zlib1g-dev curl git -y
+    apt-get install build-essential libssl-dev zlib1g-dev curl git xxd -y
 fi
 
 if [ ${OS} == CentOS ];then
-    yum install openssl-devel zlib-devel curl git -y
+    yum install openssl-devel zlib-devel curl git vim-common -y
     yum groupinstall "Development Tools" -y
 fi
 
