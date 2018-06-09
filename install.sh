@@ -84,7 +84,7 @@ if [ ${OS} == CentOS ];then
 fi
 
 # 获取本机 IP 地址
-IP=$(curl -s ip.sb)
+IP=$(curl -4 -s ip.sb)
 
 # 切换至临时目录
 mkdir /tmp/MTProxy
