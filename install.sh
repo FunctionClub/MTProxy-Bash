@@ -52,22 +52,17 @@ echo "---------------------------------------------"
 echo ""
 
 
-# 获取本机 IP 地址
-IP=$(curl -4 -s ip.sb)
-
-# 查看是否已安装
-if [[ ${IP} != "" ]];then
-  if [ -f "/etc/secret" ]; then 
-    SECRET=$(cat /etc/secret)
-    PORT=$(cat /etc/proxy-port)
-    echo "MTProxy 已安装"
-    echo "服务器IP：  ${IP}"
-    echo "端口：      ${PORT}"
-    echo "Secret：   ${SECRET}"
-    echo ""
-    echo -e "TG代理链接：${green}tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}${plain}"
-    exit 0
-  fi
+if [ -f "/etc/secret" ]; then 
+	IP=$(curl -4 -s ip.sb)
+	SECRET=$(cat /etc/secret)
+	PORT=$(cat /etc/proxy-port)
+	echo "MTProxy 已安装"
+	echo "服务器IP：  ${IP}"
+	echo "端口：      ${PORT}"
+	echo "Secret：   ${SECRET}"
+	echo ""
+	echo -e "TG代理链接：${green}tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}${plain}"
+	exit 0
 fi
 
 # 输入代理端口
@@ -87,8 +82,8 @@ if [ ${OS} == CentOS ];then
   yum groupinstall "Development Tools" -y
 fi
 
-
-
+# 获取本机 IP 地址
+IP=$(curl -4 -s ip.sb)
 
 # 切换至临时目录
 mkdir /tmp/MTProxy
