@@ -66,9 +66,27 @@ if [ -f "/etc/secret" ]; then
 fi
 
 # 输入代理端口
-read -p "Inout the Port for running MTProxy [Default: 5000]： " uport
+read -p "Input the Port for running MTProxy [Default: 5000]： " uport
 if [[ -z "${uport}" ]];then
 	uport="5000"
+fi
+
+# 输入secret
+read -p "Input the Secret for running MTProxy [Default: Autogeneration]： " SECRET
+if [[ -z "${SECRET}" ]];then
+	SECRET=$(head -c 16 /dev/urandom | xxd -ps)
+fi
+
+# 输入TAG
+read -p "Input the Tag for running MTProxy [Default: None]： " TAG
+if [[ -n "${TAG}" ]];then
+	TAG="-P "${TAG}
+fi
+
+# 输入nat信息
+read -p "Input NAT infomation like <local-addr>:<global-addr> if you are using NAT network, otherwise just press ENTER directly： " NAT
+if [[ -n "${NAT}" ]];then
+	NAT="--nat-info "${NAT}
 fi
 
 if [ ${OS} == Ubuntu ] || [ ${OS} == Debian ];then
@@ -101,8 +119,7 @@ cp objs/bin/mtproto-proxy /usr/local/bin/
 curl -s https://core.telegram.org/getProxySecret -o /etc/proxy-secret
 curl -s https://core.telegram.org/getProxyConfig -o /etc/proxy-multi.conf
 echo "${uport}" > /etc/proxy-port
-head -c 16 /dev/urandom | xxd -ps > /etc/secret
-SECRET=$(cat /etc/secret)
+echo "${SECRET}" > /etc/secret
 
 # 设置 Systemd 服务管理配置
 cat << EOF > /etc/systemd/system/MTProxy.service
@@ -113,7 +130,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/usr/local/bin/
-ExecStart=/usr/local/bin/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
+ExecStart=/usr/local/bin/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} ${TAG} ${NAT} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
 Restart=on-failure
 
 [Install]
